@@ -1,6 +1,8 @@
 package gr.aueb.cf.hotel_managment.repository;
 
 import gr.aueb.cf.hotel_managment.model.Room;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +25,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             @Param("checkIn") LocalDateTime checkIn,
             @Param("checkOut") LocalDateTime checkOut
     );
+
+    Page<Room> findByHotelId(Long hotelId, Pageable pageable);
+    List<Room> findByPricePerNightBetweenOrderByPricePerNightAsc(Double minPrice, Double maxPrice);
 }

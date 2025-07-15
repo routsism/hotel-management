@@ -1,6 +1,8 @@
 package gr.aueb.cf.hotel_managment.repository;
 
 import gr.aueb.cf.hotel_managment.model.Reservation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +24,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("checkOut") LocalDateTime checkOut
     );
     List<Reservation> findByStatusId(Long statusId);
+    Page<Reservation> findByUserId(Long userId, Pageable pageable);
+    Page<Reservation> findByRoomId(Long roomId, Pageable pageable);
 }

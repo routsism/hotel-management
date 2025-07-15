@@ -11,6 +11,8 @@ import gr.aueb.cf.hotel_managment.model.core.exceptions.AppObjectNotFoundExcepti
 import gr.aueb.cf.hotel_managment.repository.RoleRepository;
 import gr.aueb.cf.hotel_managment.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,4 +96,13 @@ public class UserService {
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
         userRepository.delete(user);
     }
+
+    @Transactional(readOnly = true)
+    public Page<UserReadOnlyDTO> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toUserReadOnlyDTO);
+    }
+
+
+
 }

@@ -2,7 +2,9 @@ package gr.aueb.cf.hotel_managment.rest;
 
 import gr.aueb.cf.hotel_managment.dto.AuthenticationRequestDTO;
 import gr.aueb.cf.hotel_managment.dto.AuthenticationResponseDTO;
+import gr.aueb.cf.hotel_managment.dto.RoleReadOnlyDTO;
 import gr.aueb.cf.hotel_managment.model.User;
+import gr.aueb.cf.hotel_managment.model.Role;
 import gr.aueb.cf.hotel_managment.model.core.exceptions.AppObjectNotAuthorizedException;
 import gr.aueb.cf.hotel_managment.repository.UserRepository;
 import gr.aueb.cf.hotel_managment.security.JwtService;
@@ -38,13 +40,13 @@ public class AuthRestController {
             User user = userRepository.findByUsername(request.getUsername())
                     .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "Invalid credentials"));
 
-            String jwtToken = jwtService.generateToken(user.getUsername(), user.getRole().getName());
+            String jwtToken = jwtService.generateToken(user.getUsername(), "ADMIN");
 
             AuthenticationResponseDTO response = AuthenticationResponseDTO.builder()
                     .userId(user.getId())
                     .username(user.getUsername())
                     .email(user.getEmail())
-                    .role(user.getRole().getName())
+                    .role(new RoleReadOnlyDTO(user.getRole().getId(), user.getRole().getName()))
                     .token(jwtToken)
                     .build();
 

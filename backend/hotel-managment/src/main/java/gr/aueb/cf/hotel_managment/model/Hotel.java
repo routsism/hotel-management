@@ -3,8 +3,9 @@ package gr.aueb.cf.hotel_managment.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -28,6 +29,6 @@ public class Hotel extends AbstractEntity {
     private String email;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL , orphanRemoval = true)
-    private List<Room> rooms = new ArrayList<>();
+    private Set<Room> rooms = new HashSet<>();
 
 }

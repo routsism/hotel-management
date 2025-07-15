@@ -10,6 +10,6 @@ public class AuthenticationResponseDTO {
     private Long userId;
     private String username;
     private String email;
-    private String role;
+    private RoleReadOnlyDTO role;
     private String token;
 }

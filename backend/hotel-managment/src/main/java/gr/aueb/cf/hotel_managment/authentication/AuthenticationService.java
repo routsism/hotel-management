@@ -2,6 +2,7 @@ package gr.aueb.cf.hotel_managment.authentication;
 
 import gr.aueb.cf.hotel_managment.dto.AuthenticationResponseDTO;
 import gr.aueb.cf.hotel_managment.dto.AuthenticationRequestDTO;
+import gr.aueb.cf.hotel_managment.dto.RoleReadOnlyDTO;
 import gr.aueb.cf.hotel_managment.model.core.exceptions.AppObjectNotAuthorizedException;
 import gr.aueb.cf.hotel_managment.model.User;
 import gr.aueb.cf.hotel_managment.repository.UserRepository;
@@ -25,18 +26,16 @@ public class AuthenticationService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
 
-        // Βρες τον χρήστη στη βάση
+
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "User not authorized"));
 
-        // Δημιούργησε token με το username και το role του χρήστη
         String token = jwtService.generateToken(user.getUsername(), user.getRole().getName());
 
-        // Επιστροφή του DTO με τα απαραίτητα στοιχεία
         return AuthenticationResponseDTO.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .role(user.getRole().getName())
+                .role(new RoleReadOnlyDTO(user.getRole().getId(), user.getRole().getName()))
                 .token(token)
                 .build();
     }

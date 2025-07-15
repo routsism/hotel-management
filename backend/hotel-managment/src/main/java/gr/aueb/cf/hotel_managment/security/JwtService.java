@@ -1,18 +1,22 @@
 package gr.aueb.cf.hotel_managment.security;
 
+import gr.aueb.cf.hotel_managment.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -23,9 +27,11 @@ public class JwtService {
     // Token expiration = 3 hours
     private final long jwtExpiration = 3 * 60 * 60 * 1000;
 
-    public String generateToken(String username, String role) {
+    public String generateToken(String username , String role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
+        claims.put("authorities", List.of("ROLE_" + role.toUpperCase()));
+
+
         return Jwts.builder()
                 .setIssuer("self")
                 .setClaims(claims)
