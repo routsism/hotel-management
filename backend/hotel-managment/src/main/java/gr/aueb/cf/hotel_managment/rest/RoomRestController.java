@@ -7,6 +7,7 @@ import gr.aueb.cf.hotel_managment.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +21,8 @@ public class RoomRestController {
 
     private final RoomService roomService;
 
+
+    @PostMapping
     public ResponseEntity<RoomReadOnlyDTO> createRoom(@RequestBody RoomInsertDTO dto) {
         try {
             RoomReadOnlyDTO createdRoom = roomService.createRoom(dto);
@@ -37,15 +40,27 @@ public class RoomRestController {
         return ResponseEntity.ok(roomService.findAvailableRooms(checkIn, checkOut));
     }
 
+
     @PatchMapping("/{id}/price")
     public ResponseEntity<RoomReadOnlyDTO> updateRoomPrice(
             @PathVariable Long id,
-            @RequestParam Double newPrice
+            @RequestParam Double pricePerNight
     ) {
         try {
-            return ResponseEntity.ok(roomService.updateRoomPrice(id, newPrice));
+            RoomReadOnlyDTO updatedRoom = roomService.updateRoomPrice(id, pricePerNight);
+            return ResponseEntity.ok(updatedRoom);
         } catch (AppObjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RoomReadOnlyDTO> getRoomById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(roomService.getRoomById(id));
+        } catch (AppObjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
 }

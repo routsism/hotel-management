@@ -44,10 +44,34 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(customAccessDeniedHandler())
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints (no auth required)
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/users/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/reservations/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                        // Hotel endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/hotels", "/api/hotels/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/hotels").hasAuthority("ROLE_ADMIN")
+
+                        // Room endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/rooms").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/rooms").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+                                .requestMatchers(HttpMethod.GET, "/api/rooms/{id}").permitAll()
+                                .requestMatchers(HttpMethod.PATCH, "/api/rooms/**/price").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+
+
+                        // Reservation endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/reservations").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+                        .requestMatchers(HttpMethod.POST, "/api/reservations").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_GUEST")
+                        .requestMatchers(HttpMethod.DELETE, "/api/reservations/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+
+                        // User endpoints
+                                .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/users/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority("ROLE_ADMIN")
+
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

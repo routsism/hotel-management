@@ -10,8 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -48,6 +52,7 @@ public class UserRestController {
         }
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         LOGGER.info("Fetching user with ID: {}", id);
@@ -59,6 +64,42 @@ public class UserRestController {
         } catch (AppObjectNotFoundException e) {
             LOGGER.warn("User not found with ID: {}", id);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserReadOnlyDTO> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserInsertDTO dto
+    ) {
+        try {
+            return ResponseEntity.ok(userService.updateUser(id, dto));
+        } catch (AppObjectNotFoundException | AppObjectInvalidArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (AppObjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserReadOnlyDTO>> getAllUsers() {
+        LOGGER.info("Fetching all users");
+        try {
+            List<UserReadOnlyDTO> users = userService.getAllUsers();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            LOGGER.error("Error fetching users: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

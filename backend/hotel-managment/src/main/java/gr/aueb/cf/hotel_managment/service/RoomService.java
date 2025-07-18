@@ -62,14 +62,14 @@ public class RoomService {
         return roomMapper.toRoomReadOnlyDTO(updatedRoom);
     }
 
-    @Transactional
-    public RoomReadOnlyDTO updateRoomStatus(Long roomId, Long statusId) throws AppObjectNotFoundException {
-        Room room = roomRepository.findById(roomId)
+
+    @Transactional(readOnly = true)
+    public RoomReadOnlyDTO getRoomById(Long id) throws AppObjectNotFoundException {
+        return roomRepository.findById(id)
+                .map(roomMapper::toRoomReadOnlyDTO)
                 .orElseThrow(() -> new AppObjectNotFoundException("Room", "Room not found"));
-        RoomStatus status = roomStatusRepository.findById(statusId)
-                .orElseThrow(() -> new AppObjectNotFoundException("RoomStatus", "Status not found"));
-        room.setRoomStatus(status);
-        Room updatedRoom = roomRepository.save(room);
-        return roomMapper.toRoomReadOnlyDTO(updatedRoom);
     }
+
+
+
 }
