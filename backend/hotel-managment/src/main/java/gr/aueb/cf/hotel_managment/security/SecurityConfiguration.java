@@ -56,7 +56,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/rooms").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/rooms").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
                                 .requestMatchers(HttpMethod.GET, "/api/rooms/{id}").permitAll()
-                                .requestMatchers(HttpMethod.PATCH, "/api/rooms/**/price").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+                                .requestMatchers(HttpMethod.PATCH, "/api/rooms/{id}/price").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
 
 
                         // Reservation endpoints

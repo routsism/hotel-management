@@ -42,17 +42,19 @@ public class RoomRestController {
 
 
     @PatchMapping("/{id}/price")
-    public ResponseEntity<RoomReadOnlyDTO> updateRoomPrice(
-            @PathVariable Long id,
-            @RequestParam Double pricePerNight
-    ) {
+    public ResponseEntity<?> updateRoomPrice(@PathVariable Long id, @RequestParam Double pricePerNight) {
         try {
             RoomReadOnlyDTO updatedRoom = roomService.updateRoomPrice(id, pricePerNight);
             return ResponseEntity.ok(updatedRoom);
         } catch (AppObjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal error: " + e.getMessage());
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<RoomReadOnlyDTO> getRoomById(@PathVariable Long id) {
