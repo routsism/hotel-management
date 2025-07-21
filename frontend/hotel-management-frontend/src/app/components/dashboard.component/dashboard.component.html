@@ -1,0 +1,15 @@
+<mat-toolbar color="primary">
+  <span>🏨 Hotel Management</span>
+  <span class="spacer"></span>
+  <button mat-button (click)="logout()">Logout</button>
+</mat-toolbar>
+
+<div class="container mt-4">
+  <h2>Welcome to Hotel Management Dashboard</h2>
+
+  <div class="actions">
+    <button mat-raised-button color="accent" routerLink="/rooms">Manage Rooms</button>
+    <button mat-raised-button color="warn" routerLink="/reservations">Manage Reservations</button>
+  </div>
+</div>
+

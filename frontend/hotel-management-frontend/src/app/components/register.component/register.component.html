@@ -1,0 +1,63 @@
+<div class="register-page">
+  <div class="register-container">
+    <mat-card class="register-card">
+      <mat-card-header>
+        <mat-card-title>✨ Create Your Account</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)">
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput required name="username" [(ngModel)]="username" #usernameCtrl="ngModel">
+            <mat-error *ngIf="(usernameCtrl.invalid && (usernameCtrl.touched || registerForm.submitted))">
+              Username is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput required email name="email" [(ngModel)]="email" #emailCtrl="ngModel">
+            <mat-error *ngIf="(emailCtrl.invalid && (emailCtrl.touched || registerForm.submitted))">
+              Please enter a valid email
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput required type="password" name="password" [(ngModel)]="password" #passwordCtrl="ngModel">
+            <mat-error *ngIf="(passwordCtrl.invalid && (passwordCtrl.touched || registerForm.submitted))">
+              Password is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Role</mat-label>
+            <mat-select required name="roleId" [(ngModel)]="roleId" #roleCtrl="ngModel">
+              <mat-option [value]="1">ADMIN</mat-option>
+              <mat-option [value]="2">EMPLOYEE</mat-option>
+              <mat-option [value]="4">GUEST</mat-option>
+            </mat-select>
+            <mat-error *ngIf="(roleCtrl.invalid && (roleCtrl.touched || registerForm.submitted))">
+              Please select a role
+            </mat-error>
+          </mat-form-field>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <button mat-raised-button color="accent" class="full-width register-btn" type="submit">
+            Create Account
+          </button>
+        </form>
+      </mat-card-content>
+
+      <mat-card-actions class="login-section">
+        <span>Already have an account?</span>
+        <button mat-button color="primary" (click)="goToLogin()">Login</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
