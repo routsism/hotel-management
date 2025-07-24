@@ -39,11 +39,14 @@ export class LoginComponent {
       password: this.password
     };
 
-    this.authService.login(req).subscribe({
-      next: (response) => {
-        this.authService.saveToken(response.token);
-        this.router.navigate(['/dashboard']); 
-      },
+   this.authService.login(req).subscribe({
+  next: (response) => {
+    // this.authService.saveToken(response.token);
+    // this.authService.saveUsername(response.username); 
+    this.authService.saveAuthData(response);
+    console.log('✅ Logged in as', response.username);
+    this.router.navigate(['/dashboard']);
+    },
       error: (err) => {
         if (err.status === 401) {
           this.errorMessage = 'Invalid username or password';

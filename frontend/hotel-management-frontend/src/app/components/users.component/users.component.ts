@@ -6,13 +6,16 @@ import { UserDialogComponent } from '../user-dialog.component/user-dialog.compon
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatCardModule } from '@angular/material/card';
 import { UserService, UserReadOnlyDTO } from '../../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [CommonModule, MatTableModule,MatCardModule, MatButtonModule, MatIconModule, MatDialogModule,MatProgressBarModule ],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })
@@ -22,7 +25,7 @@ export class UsersComponent implements OnInit {
   loading = false;
   displayedColumns: string[] = ['username', 'email', 'role', 'actions'];
 
-  constructor(private userService: UserService, private dialog: MatDialog, private snackBar: MatSnackBar) {}
+  constructor(private userService: UserService, private dialog: MatDialog, private snackBar: MatSnackBar, private router: Router) {}
  
 
   ngOnInit(): void {
@@ -76,12 +79,16 @@ deleteUser(id: number) {
 }
 
 addUser() {
+  this.router.navigate(['/users/register'], { replaceUrl: false });
+
   const dialogRef = this.dialog.open(UserDialogComponent, {
     width: '400px',
     data: { mode: 'create' }
   });
 
   dialogRef.afterClosed().subscribe(result => {
+    this.router.navigate(['/users']);
+
     if (result) {
       this.userService.createUser(result).subscribe({
         next: () => {
@@ -93,4 +100,9 @@ addUser() {
     }
   });
 }
+
+ goBack() {
+    this.router.navigate(['/dashboard']);  
+  }
+
 }

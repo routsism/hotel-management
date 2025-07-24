@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface UserReadOnlyDTO {
@@ -35,23 +35,37 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   getAllUsers(): Observable<UserReadOnlyDTO[]> {
-    return this.http.get<UserReadOnlyDTO[]>(this.apiUrl);
+    return this.http.get<UserReadOnlyDTO[]>(this.apiUrl, { headers: this.getAuthHeaders() });
   }
 
   createUser(user: UserInsertDTO): Observable<UserReadOnlyDTO> {
-    return this.http.post<UserReadOnlyDTO>(`${this.apiUrl}/register`, user);
+    return this.http.post<UserReadOnlyDTO>(
+      `${this.apiUrl}/register`, 
+      user, 
+      { headers: this.getAuthHeaders() }
+    );
   }
 
   updateUser(id: number, user: UserInsertDTO): Observable<UserReadOnlyDTO> {
-    return this.http.put<UserReadOnlyDTO>(`${this.apiUrl}/${id}`, user);
+    return this.http.put<UserReadOnlyDTO>(
+      `${this.apiUrl}/${id}`, 
+      user,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-  
-  register(user: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, user);
+    return this.http.delete<void>(
+      `${this.apiUrl}/${id}`, 
+      { headers: this.getAuthHeaders() }
+    );
   }
 }

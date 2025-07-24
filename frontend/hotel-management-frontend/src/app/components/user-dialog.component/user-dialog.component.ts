@@ -49,7 +49,11 @@ export class UserDialogComponent implements OnInit {
     this.userForm = this.fb.group({
       username: [this.data.user?.username || '', [Validators.required, Validators.minLength(3)]],
       email: [this.data.user?.email || '', [Validators.required, Validators.email]],
-      password: ['', this.mode === 'create' ? [Validators.required, Validators.minLength(6)] : []],
+       password: ['', [
+          this.mode === 'create' ? Validators.required : Validators.nullValidator,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
+        ]],
       roleId: [this.data.user?.role.id || '', Validators.required]
     });
   }
@@ -59,7 +63,6 @@ export class UserDialogComponent implements OnInit {
 
     const formValue = this.userForm.value;
 
-    // Για το update δεν στέλνουμε password αν είναι κενό
     if (this.mode === 'edit' && !formValue.password) {
       delete formValue.password;
     }

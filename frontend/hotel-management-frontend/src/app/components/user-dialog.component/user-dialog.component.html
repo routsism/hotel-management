@@ -31,9 +31,13 @@
       Password is required
     </mat-error>
     <mat-error *ngIf="userForm.get('password')?.hasError('minlength')">
-      Minimum 6 characters
+      Minimum 8 characters
+    </mat-error>
+    <mat-error *ngIf="userForm.get('password')?.hasError('pattern')">
+      Must contain at least 1 uppercase, 1 number, and 1 special char.
     </mat-error>
   </mat-form-field>
+   
 
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Role</mat-label>
