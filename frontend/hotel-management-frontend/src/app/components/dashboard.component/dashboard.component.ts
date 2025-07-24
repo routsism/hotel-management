@@ -1,21 +1,47 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule} from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    RouterModule
+  ],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'],
-  imports: [CommonModule, MatToolbarModule, MatButtonModule]
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
-  constructor(private router: Router) {}
+
+  username: string | null = '';
+  role: string = '';
+
+  constructor(private router: Router, public authService: AuthService) {}
+
+  ngOnInit() {
+   this.username = this.authService.getUsername();      
+  }
 
   logout() {
-    localStorage.removeItem('auth_token');
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
+
+  goTo(path: string) {
+    this.router.navigate(['/' + path]);
+  }
+
+  
 }
+

@@ -40,7 +40,7 @@ public class AuthRestController {
             User user = userRepository.findByUsername(request.getUsername())
                     .orElseThrow(() -> new AppObjectNotAuthorizedException("User", "Invalid credentials"));
 
-            String jwtToken = jwtService.generateToken(user.getUsername(), "ADMIN");
+            String jwtToken = jwtService.generateToken(user);
 
             AuthenticationResponseDTO response = AuthenticationResponseDTO.builder()
                     .userId(user.getId())

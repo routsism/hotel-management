@@ -27,15 +27,20 @@ public class JwtService {
     // Token expiration = 3 hours
     private final long jwtExpiration = 3 * 60 * 60 * 1000;
 
-    public String generateToken(String username , String role) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authorities", List.of("ROLE_" + role.toUpperCase()));
+        String roleName = user.getRole().getName();
 
+        // Βεβαιωνόμαστε ότι το ROLE_ prefix υπάρχει και το κάνουμε uppercase
+        if (!roleName.startsWith("ROLE_")) {
+            roleName = "ROLE_" + roleName.toUpperCase();
+        }
+        claims.put("authorities", List.of(roleName));
 
         return Jwts.builder()
                 .setIssuer("self")
                 .setClaims(claims)
-                .setSubject(username)
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)

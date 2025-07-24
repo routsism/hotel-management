@@ -1,15 +1,41 @@
-<mat-toolbar color="primary">
-  <span>🏨 Hotel Management</span>
+<mat-toolbar class="dashboard-toolbar-dark">
+  <span class="logo">🏨 Hotel Management</span>
   <span class="spacer"></span>
-  <button mat-button (click)="logout()">Logout</button>
+   <span class="username">Welcome, {{ username }}</span>
+  <button mat-icon-button (click)="logout()" matTooltip="Logout">
+    <mat-icon>logout</mat-icon>
+  </button>
 </mat-toolbar>
 
-<div class="container mt-4">
-  <h2>Welcome to Hotel Management Dashboard</h2>
+<div class="dashboard-bg">
+  <div class="overlay"></div>
 
-  <div class="actions">
-    <button mat-raised-button color="accent" routerLink="/rooms">Manage Rooms</button>
-    <button mat-raised-button color="warn" routerLink="/reservations">Manage Reservations</button>
+  <div class="dashboard-grid-dark">
+
+  <mat-card 
+    *ngIf="authService.isAdmin()" 
+    routerLink="/users" 
+    class="dashboard-card-dark users">
+    
+    <mat-icon>people</mat-icon>
+    <h3>Manage Users</h3>
+    
+  </mat-card>
+
+      <mat-card routerLink="/hotels" class="dashboard-card-dark hotels">
+        <mat-icon>apartment</mat-icon>
+        <h3>Manage Hotels</h3>
+      </mat-card>
+
+      <mat-card routerLink="/rooms" class="dashboard-card-dark rooms">
+        <mat-icon>meeting_room</mat-icon>
+        <h3>Manage Rooms</h3>
+      </mat-card>
+
+      <mat-card routerLink="/reservations" class="dashboard-card-dark reservations">
+        <mat-icon>book_online</mat-icon>
+        <h3>Manage Reservations</h3>
+      </mat-card>
+    </div>
   </div>
-</div>
 

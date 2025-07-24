@@ -66,10 +66,7 @@ public class SecurityConfiguration {
 
                         // User endpoints
                                 .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/users").hasAnyAuthority("ROLE_ADMIN")
-                                .requestMatchers(HttpMethod.PUT, "/api/users/**").permitAll()
-                                .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers("/api/users/**").hasAuthority("ROLE_ADMIN")
 
 
                         .anyRequest().authenticated()
