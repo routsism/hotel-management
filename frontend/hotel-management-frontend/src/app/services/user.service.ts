@@ -12,7 +12,7 @@ export interface UserReadOnlyDTO {
   };
 }
 
-interface RegisterRequest {
+export interface RegisterRequest {
   username: string;
   email: string;
   password: string;

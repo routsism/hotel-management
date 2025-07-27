@@ -79,7 +79,7 @@ deleteUser(id: number) {
 }
 
 addUser() {
-  this.router.navigate(['/users/register'], { replaceUrl: false });
+  // this.router.navigate(['/users/register'], { replaceUrl: false });
 
   const dialogRef = this.dialog.open(UserDialogComponent, {
     width: '400px',
@@ -87,7 +87,7 @@ addUser() {
   });
 
   dialogRef.afterClosed().subscribe(result => {
-    this.router.navigate(['/users']);
+    // this.router.navigate(['/users']);
 
     if (result) {
       this.userService.createUser(result).subscribe({

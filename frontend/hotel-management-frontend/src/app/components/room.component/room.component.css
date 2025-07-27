@@ -1,0 +1,187 @@
+/* Background και overlay */
+.background-wrapper {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+  filter: brightness(0.35) saturate(0.8);
+  z-index: 0;
+}
+
+.background-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1;
+}
+
+/* Container που κρατάει όλα */
+.container {
+  position: relative;
+  z-index: 3;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #e0f0ff;
+}
+
+/* Card */
+.card {
+  background: rgba(15, 22, 39, 0.9);
+  border-radius: 1rem;
+  box-shadow: 0 15px 30px rgba(0, 111, 184, 0.5);
+  padding: 3rem 2.5rem;
+  backdrop-filter: saturate(180%) blur(15px);
+}
+
+/* Header */
+h2 {
+  font-weight: 800;
+  font-size: 2.6rem;
+  text-align: center;
+  letter-spacing: 3px;
+  margin-bottom: 3rem;
+  color: #a8d0ff;
+  text-shadow: 0 0 15px rgba(0,111,184,0.8);
+}
+
+/* Κουμπιά */
+.d-flex {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  font-weight: 700;
+  border-radius: 1rem;
+  padding: 0.75rem 2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 111, 184, 0.4);
+  cursor: pointer;
+}
+
+.btn-glow {
+  background: #006fb8;
+  color: #e0f7ff;
+  border: none;
+  box-shadow:
+    0 0 8px #006fb8,
+    0 0 20px #3399ff,
+    0 0 40px #3399ff;
+}
+
+.btn-glow:hover {
+  background: #3399ff;
+  box-shadow:
+    0 0 12px #3399ff,
+    0 0 30px #66bbff,
+    0 0 60px #66bbff;
+}
+
+.btn-outline-light {
+  border: 2px solid #a8d0ff;
+  background: transparent;
+  color: #a8d0ff;
+}
+
+.btn-outline-light:hover {
+  background: #a8d0ff;
+  color: #0f1627;
+  box-shadow: 0 0 20px #a8d0ff;
+}
+
+/* Mat progress bar override */
+.mat-progress-bar {
+  height: 5px !important;
+  border-radius: 5px;
+}
+
+/* Alert error */
+.alert-danger {
+  background: rgba(200, 40, 40, 0.9);
+  border-radius: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(200, 40, 40, 0.8);
+}
+
+/* Πίνακας */
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.8rem;
+  font-size: 1.1rem;
+  color: #c6dafc;
+  user-select: none;
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 1rem 1.2rem;
+  text-align: left;
+}
+
+.custom-table th {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #81a8ff;
+  border-bottom: 2px solid rgba(100,150,255,0.4);
+  background: rgba(15, 22, 39, 0.7);
+}
+
+.custom-table td {
+  background: rgba(10, 16, 28, 0.6);
+  border-left: 4px solid transparent;
+  transition: background 0.35s ease, color 0.35s ease;
+  border-radius: 0.5rem;
+}
+
+/* Σειρές πίνακα hover & focus-within (για mobile tap) */
+.data-row:hover td,
+.data-row:focus-within td {
+  background: rgba(0, 111, 184, 0.95);
+  box-shadow: 0 10px 22px rgba(0, 111, 184, 0.85);
+  color: #e0f7ff;
+  font-weight: 700;
+  border-left-color: #66bbff;
+  outline: none;
+}
+
+.data-row {
+  cursor: pointer;
+  outline: none;
+}
+
+/* Χωρίς outline όταν είναι focus */
+.data-row:focus-within {
+  outline: none;
+}
+
+/* Κουμπιά icon στο actions */
+.mat-icon-button {
+  color: #81a8ff;
+  transition: color 0.3s ease;
+}
+
+.mat-icon-button:hover {
+  color: #66bbff;
+}
+
+/* Όταν είναι warn (delete) κόκκινο */
+.mat-icon-button[color="warn"] {
+  color: #f56565;
+}
+
+.mat-icon-button[color="warn"]:hover {
+  color: #f87171;
+}
+
+/* Όταν δεν υπάρχουν δωμάτια */
+.no-data {
+  text-align: center;
+  font-style: italic;
+  font-weight: 600;
+  padding: 2rem 0;
+  color: #9fb9db;
+}

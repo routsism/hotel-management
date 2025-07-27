@@ -10,7 +10,7 @@ export interface AuthRequest {
 
 export interface RoleDTO {
   id: number;
-  name: string; // π.χ. "ADMIN", "USER"
+  name: string; 
 }
 
 export interface UserRegisterDTO {
@@ -80,6 +80,25 @@ export class AuthService {
   console.log('Roles from token:', roles);
   return roles.includes('ADMIN') || roles.includes('ROLE_ADMIN');
 }
+
+isEmployee(): boolean {
+  const token = this.getToken();
+  if (!token) return false;
+
+  const decoded: any = jwtDecode(token);
+  const roles: string[] = decoded.roles || decoded.authorities || [];
+  return roles.includes('ROLE_EMPLOYEE') || roles.includes('EMPLOYEE');
+}
+
+isGuest(): boolean {
+  const token = this.getToken();
+  if (!token) return false;
+
+  const decoded: any = jwtDecode(token);
+  const roles: string[] = decoded.roles || decoded.authorities || [];
+  return roles.includes('ROLE_GUEST') || roles.includes('GUEST');
+}
+
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);

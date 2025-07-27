@@ -3,9 +3,13 @@ import { HttpClient,  } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HotelInsertDTO, HotelReadOnlyDTO } from '../models/hotel.model';
 import { AuthService } from './auth.service';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
+
+ export interface HotelResponse {
+  content: HotelReadOnlyDTO[];
+}
+
+
 
 @Injectable({ providedIn: 'root' })
 export class HotelService {
@@ -21,9 +25,9 @@ export class HotelService {
     });
   }
 
-  getAllHotels(): Observable<HotelReadOnlyDTO[]> {
-    return this.http.get<HotelReadOnlyDTO[]>(this.apiUrl);
-  }
+  getAllHotels(): Observable<HotelResponse> {
+  return this.http.get<HotelResponse>(this.apiUrl);
+}
 
   getHotelById(id: number): Observable<HotelReadOnlyDTO> {
     return this.http.get<HotelReadOnlyDTO>(`${this.apiUrl}/${id}`);

@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HotelReadOnlyDTO, HotelInsertDTO } from '../../models/hotel.model';
-import { HotelService } from '../../services/hotel.service';
+import { HotelService, HotelResponse } from '../../services/hotel.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -68,9 +68,8 @@ export class HotelComponent implements OnInit {
 
  loadHotels(): void {
   this.hotelService.getAllHotels().subscribe({
-    next: (data) => {
-      console.log('Hotels data:', data);
-      this.hotels = (data as any).content || data;
+    next: (response: HotelResponse) => {
+    this.hotels = response.content;
     },
     error: (err) => {
       this.errorMessage = 'Error loading hotels';
