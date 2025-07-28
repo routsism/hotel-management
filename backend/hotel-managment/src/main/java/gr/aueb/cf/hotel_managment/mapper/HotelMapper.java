@@ -30,4 +30,14 @@ public class HotelMapper {
         hotel.setEmail(dto.getEmail());
         return hotel;
     }
+
+    public void updateHotelFromDTO(HotelInsertDTO dto, Hotel hotel) {
+        if (dto == null || hotel == null) return;
+
+        hotel.setName(dto.getName());
+        hotel.setAddress(dto.getAddress());
+        hotel.setPhone(dto.getPhone());
+        hotel.setEmail(dto.getEmail());
+    }
+
 }

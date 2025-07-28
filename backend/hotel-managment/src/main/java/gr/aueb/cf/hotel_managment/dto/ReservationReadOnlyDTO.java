@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,8 +16,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReservationReadOnlyDTO {
     private Long id;
-    private Long userId;
-    private Long roomId;
+    private String username;
+    private String roomNumber;
+    private String hotelName;
     private LocalDateTime checkInDate;
     private LocalDateTime checkOutDate;
     private ReservationStatusReadOnlyDTO reservationStatus;

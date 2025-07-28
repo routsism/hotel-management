@@ -42,4 +42,25 @@ public class HotelRestController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<HotelReadOnlyDTO> updateHotel(
+            @PathVariable Long id,
+            @Valid @RequestBody HotelInsertDTO dto) {
+        try {
+            HotelReadOnlyDTO updatedHotel = hotelService.updateHotel(id, dto);
+            return ResponseEntity.ok(updatedHotel);
+        } catch (AppObjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteHotel(@PathVariable Long id) {
+        try {
+            hotelService.deleteHotel(id);
+            return ResponseEntity.noContent().build();
+        } catch (AppObjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
 }

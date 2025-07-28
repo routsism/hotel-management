@@ -10,6 +10,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HotelReadOnlyDTO, HotelInsertDTO } from '../../models/hotel.model';
 import { HotelService, HotelResponse } from '../../services/hotel.service';
 import { AuthService } from '../../services/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { HotelDialogComponent } from '../hotel-dialog.component/hotel-dialog.component';
 
 @Component({
   selector: 'app-hotel',
@@ -24,6 +28,7 @@ import { AuthService } from '../../services/auth.service';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatIconModule
   ],
 })
 export class HotelComponent implements OnInit {
@@ -44,7 +49,9 @@ export class HotelComponent implements OnInit {
     private hotelService: HotelService,
     private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +107,10 @@ export class HotelComponent implements OnInit {
       this.hotels.push(hotel);
       this.newHotel = { name: '', address: '', phone: '', email: '' };
       this.errorMessage = '';
+
+       this.snackBar.open('Hotel created successfully!', 'Close', {
+        duration: 3000, 
+        });
     },
     error: (err) => {
       this.errorMessage = 'Error creating hotel';
@@ -127,6 +138,57 @@ export class HotelComponent implements OnInit {
       },
     });
   }
+
+  deleteHotel(hotel: HotelReadOnlyDTO): void {
+  if (!this.isAdmin) {
+    this.errorMessage = 'Only admin can delete hotels!';
+    return;
+  }
+
+  const confirmed = window.confirm(`Are you sure you want to delete hotel "${hotel.name}"?`);
+  if (!confirmed) return;
+
+  this.hotelService.deleteHotel(hotel.id!).subscribe({
+    next: () => {
+      this.hotels = this.hotels.filter(h => h.id !== hotel.id);
+      this.snackBar.open('Hotel deleted successfully!', 'Close', { duration: 3000 });
+    },
+    error: (err) => {
+      this.errorMessage = 'Error deleting hotel';
+      console.error(err);
+    }
+  });
+}
+
+editHotel(hotel: HotelReadOnlyDTO): void {
+  if (!this.isAdmin) {
+    this.errorMessage = 'Only admin can edit hotels!';
+    return;
+  }
+
+  const dialogRef = this.dialog.open(HotelDialogComponent, {
+    width: '400px',
+    data: hotel,
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      const updatedHotel = { ...hotel, ...result };
+      this.hotelService.updateHotel(hotel.id!, updatedHotel).subscribe({
+        next: (updated) => {
+          const index = this.hotels.findIndex(h => h.id === updated.id);
+          if (index !== -1) this.hotels[index] = updated;
+          this.snackBar.open('Hotel updated successfully!', 'Close', { duration: 3000 });
+        },
+        error: (err) => {
+          this.errorMessage = 'Error updating hotel';
+          console.error(err);
+        }
+      });
+    }
+  });
+}
+
 
   backToAllHotels(): void {
     this.selectedHotel = null;

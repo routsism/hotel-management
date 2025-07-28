@@ -39,4 +39,20 @@ public class HotelService {
                 .orElseThrow(() -> new AppObjectNotFoundException("Hotel", "Hotel not found"));
     }
 
+    @Transactional
+    public HotelReadOnlyDTO updateHotel(Long id, HotelInsertDTO dto) throws AppObjectNotFoundException {
+        Hotel existingHotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new AppObjectNotFoundException("Hotel", "Hotel not found"));
+
+        hotelMapper.updateHotelFromDTO(dto, existingHotel); // ενημέρωση πεδίων
+        Hotel updatedHotel = hotelRepository.save(existingHotel);
+        return hotelMapper.toHotelReadOnlyDTO(updatedHotel);
+    }
+
+    @Transactional
+    public void deleteHotel(Long id) throws AppObjectNotFoundException {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new AppObjectNotFoundException("Hotel", "Hotel not found"));
+        hotelRepository.delete(hotel);
+    }
 }

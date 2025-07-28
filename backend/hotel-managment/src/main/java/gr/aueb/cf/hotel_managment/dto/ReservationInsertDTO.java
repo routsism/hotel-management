@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,10 +20,10 @@ public class ReservationInsertDTO {
     private Long roomId;
 
     @NotNull(message = "Check-in date is required")
-    private LocalDate checkInDate;
+    private LocalDateTime checkInDate;
 
     @NotNull(message = "Check-out date is required")
-    private LocalDate checkOutDate;
+    private LocalDateTime checkOutDate;
 
     @NotNull(message = "Reservation status ID is required")
     private Long reservationStatusId;

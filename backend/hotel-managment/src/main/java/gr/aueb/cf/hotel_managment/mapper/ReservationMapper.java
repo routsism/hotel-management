@@ -23,10 +23,12 @@ public class ReservationMapper {
 
         ReservationReadOnlyDTO dto = new ReservationReadOnlyDTO();
         dto.setId(reservation.getId());
-        dto.setUserId(reservation.getUser().getId());
-        dto.setRoomId(reservation.getRoom().getId());
-        dto.setCheckInDate(reservation.getCheckInDate());   // LocalDateTime απευθείας
-        dto.setCheckOutDate(reservation.getCheckOutDate()); // LocalDateTime απευθείας
+        dto.setUsername(reservation.getUser().getUsername());
+        dto.setRoomNumber(reservation.getRoom().getRoomNumber());
+        dto.setHotelName(reservation.getRoom().getHotel().getName());
+
+        dto.setCheckInDate(reservation.getCheckInDate());
+        dto.setCheckOutDate(reservation.getCheckOutDate());
         dto.setReservationStatus(reservationStatusMapper.toReservationStatusReadOnlyDTO(reservation.getStatus()));
 
         return dto;
@@ -41,8 +43,8 @@ public class ReservationMapper {
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setRoom(room);
-        reservation.setCheckInDate(dto.getCheckInDate().atStartOfDay());
-        reservation.setCheckOutDate(dto.getCheckOutDate().atStartOfDay());
+        reservation.setCheckInDate(dto.getCheckInDate());
+        reservation.setCheckOutDate(dto.getCheckOutDate());
         reservation.setStatus(status);
         return reservation;
     }

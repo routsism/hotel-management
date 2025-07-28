@@ -52,6 +52,7 @@ export class AuthService {
     localStorage.setItem(this.TOKEN_KEY, response.token);
     localStorage.setItem(this.USERNAME_KEY, response.username);
     localStorage.setItem(this.ROLE_KEY, response.role.name);
+    localStorage.setItem('auth_userId', response.userId.toString());
   }
 
   getToken(): string | null {
@@ -61,6 +62,12 @@ export class AuthService {
   getUsername(): string | null {
     return localStorage.getItem(this.USERNAME_KEY);
   }
+
+  getUserId(): number | null {
+  const userId = localStorage.getItem('auth_userId');
+  return userId ? Number(userId) : null;
+  }
+
 
   getRole(): string | null {
     return localStorage.getItem(this.ROLE_KEY);

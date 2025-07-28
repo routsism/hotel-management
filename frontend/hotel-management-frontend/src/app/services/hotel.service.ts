@@ -37,4 +37,14 @@ export class HotelService {
     const headers = this.authHeaders();
     return this.http.post<HotelReadOnlyDTO>(this.apiUrl, hotel, { headers });
   }
+
+  updateHotel(id: number, hotel: Partial<HotelReadOnlyDTO>): Observable<HotelReadOnlyDTO> {
+  const headers = this.authHeaders();
+  return this.http.put<HotelReadOnlyDTO>(`${this.apiUrl}/${id}`, hotel, { headers });
+}
+
+  deleteHotel(id: number): Observable<void> {
+    const headers = this.authHeaders();
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+  }
 }

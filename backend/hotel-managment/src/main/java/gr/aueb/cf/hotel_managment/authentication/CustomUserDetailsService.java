@@ -44,6 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private List<SimpleGrantedAuthority> mapRolesToAuthorities(Role role) {
         String roleName = "ROLE_" + role.getName().toUpperCase();
+        log.info("Assigning authority: {}", roleName);
         return Collections.singletonList(new SimpleGrantedAuthority(roleName));
 
     }

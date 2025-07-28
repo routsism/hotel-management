@@ -48,23 +48,42 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/auth/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                        // Hotel endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/hotels", "/api/hotels/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/hotels").hasAuthority("ROLE_ADMIN")
+                                // Hotel endpoints
+                                .requestMatchers(HttpMethod.GET, "/api/hotels", "/api/hotels/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/hotels").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/hotels/**").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/hotels/**").hasAuthority("ROLE_ADMIN")
 
-                        // Room endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/rooms").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+                                // Room endpoints
+                                .requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/rooms").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
                                 .requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
                                 .requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
 
 
-                        // Reservation endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/reservations").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/api/reservations").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_GUEST")
-                        .requestMatchers(HttpMethod.DELETE, "/api/reservations/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+                                // Reservation endpoints
+                                .requestMatchers(HttpMethod.GET, "/api/reservations")
+                                .hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
 
-                        // User endpoints
+                                .requestMatchers(HttpMethod.POST, "/api/reservations")
+                                .hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_GUEST")
+
+                                .requestMatchers(HttpMethod.GET, "/api/reservations/*")
+                                .hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_GUEST")
+
+//                                .requestMatchers(HttpMethod.PUT, "/api/reservations/*/dates")
+//                                .hasAuthority("ROLE_GUEST")
+
+                                .requestMatchers(HttpMethod.PUT, "/api/reservations/**")
+                                .hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+
+                                .requestMatchers(HttpMethod.DELETE, "/api/reservations/**")
+                                .hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_GUEST")
+
+
+
+
+                                // User endpoints
                                 .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                                 .requestMatchers("/api/users/**").hasAuthority("ROLE_ADMIN")
 

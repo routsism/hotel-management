@@ -88,10 +88,23 @@
       <div class="hotel-list" *ngIf="!selectedHotel">
         <h3>Existing Hotels</h3>
         <mat-card *ngFor="let hotel of hotels" class="hotel-item" appearance="outlined" style="margin-top: 12px;">
-          <h4>{{ hotel.name }}</h4>
-          <p>{{ hotel.address }}</p>
-          <p *ngIf="hotel.phone">📞 {{ hotel.phone }}</p>
-          <p *ngIf="hotel.email">✉️ {{ hotel.email }}</p>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h4>{{ hotel.name }}</h4>
+      <p>{{ hotel.address }}</p>
+      <p *ngIf="hotel.phone">📞 {{ hotel.phone }}</p>
+      <p *ngIf="hotel.email">✉️ {{ hotel.email }}</p>
+    </div>
+
+    <div *ngIf="isAdmin">
+      <button mat-icon-button color="primary" (click)="editHotel(hotel)">
+        <mat-icon>edit</mat-icon> 
+          </button>
+          <button mat-icon-button color="warn" aria-label="Delete hotel" (click)="deleteHotel(hotel)">
+            <mat-icon>delete</mat-icon> 
+          </button>
+          </div>
+          </div>
         </mat-card>
       </div>
     </mat-card-content>
