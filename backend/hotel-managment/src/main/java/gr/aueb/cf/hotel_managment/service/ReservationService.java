@@ -20,6 +20,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,11 +42,11 @@ public class ReservationService {
         return hasRole(user, "ROLE_ADMIN") || hasRole(user, "ROLE_EMPLOYEE");
     }
 
+
     @Transactional
     public ReservationReadOnlyDTO createReservation(ReservationInsertDTO dto, String username)
             throws AppObjectNotFoundException, AppObjectInvalidArgumentException {
 
-        // 1. Εύρεση User, Room, Status (με τα δικά σου ονόματα)
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
 
@@ -55,7 +56,6 @@ public class ReservationService {
         ReservationStatus status = reservationStatusRepository.findById(dto.getReservationStatusId())
                 .orElseThrow(() -> new AppObjectNotFoundException("Status", "Status not found"));
 
-        // 2. Έλεγχος για διπλές κρατήσεις (όπως το έφτιαξες)
         List<Reservation> conflicts = reservationRepository.findConflictingReservations(
                 dto.getRoomId(),
                 dto.getCheckInDate(),
@@ -67,45 +67,41 @@ public class ReservationService {
             throw new AppObjectInvalidArgumentException("Room", "Room already booked");
         }
 
-        // 3. Δημιουργία και αποθήκευση (χωρίς αλλαγή ονομασιών)
         Reservation reservation = reservationMapper.toReservationEntity(dto, user, room, status);
         Reservation savedReservation = reservationRepository.save(reservation);
         return reservationMapper.toReservationReadOnlyDTO(savedReservation);
     }
 
     @Transactional
-    public void cancelReservation(Long reservationId, String username)
-            throws AppObjectNotFoundException, AccessDeniedException {
-
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new AppObjectNotFoundException("Reservation", "Reservation not found"));
+    public void cancelReservation(Long id, String username)throws AppObjectNotFoundException {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new AppObjectNotFoundException("Reservation" ,"Reservation not found"));
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
+                .orElseThrow(() -> new AppObjectNotFoundException("User" ,"User not found"));
 
-        boolean isOwner = reservation.getUser().getId().equals(user.getId());
-        boolean isAdminOrEmployee = user.getRole().getName().equals("ROLE_ADMIN")
-                || user.getRole().getName().equals("ROLE_EMPLOYEE");
-
-        if (!isOwner && !isAdminOrEmployee) {
-            throw new AccessDeniedException("Not authorized");
+        if ("ROLE_GUEST".equals(user.getRole().getName()) &&
+                !reservation.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Guests can only cancel their own reservations");
         }
 
         reservationRepository.delete(reservation);
     }
 
     @Transactional
-    public ReservationReadOnlyDTO updateReservationDates(Long reservationId, String username, UpdateReservationDatesDTO dto)
-            throws AppObjectNotFoundException, AppObjectInvalidArgumentException, AccessDeniedException {
-
-        // 1. Βρες την κράτηση και τον χρήστη
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new AppObjectNotFoundException("Reservation", "Δεν βρέθηκε κράτηση με ID: " + reservationId));
+    public ReservationReadOnlyDTO updateReservationDates(Long id, UpdateReservationDatesDTO dto, String username)throws AppObjectInvalidArgumentException, AppObjectNotFoundException {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new AppObjectNotFoundException("Reservation","Reservation not found"));
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppObjectNotFoundException("User", "Δεν βρέθηκε χρήστης με username: " + username));
+                .orElseThrow(() -> new AppObjectNotFoundException("User","User not found"));
 
-        // 2. Έλεγχος δικαιωμάτων (όπως είχες)
+        if ("ROLE_GUEST".equals(user.getRole().getName())) {
+            if (!reservation.getUser().getId().equals(user.getId())) {
+                throw new AccessDeniedException("Guests can only update their own reservations");
+            }
+        }
+
         boolean isOwner = reservation.getUser().getId().equals(user.getId());
         boolean isAdminOrEmployee = isAdminOrEmployee(user);
         String status = reservation.getStatus().getName();
@@ -120,7 +116,7 @@ public class ReservationService {
                 reservation.getRoom().getId(),
                 dto.getNewCheckIn(),
                 dto.getNewCheckOut(),
-                reservationId
+                id
         );
 
         if (!conflicts.isEmpty()) {
@@ -130,63 +126,63 @@ public class ReservationService {
         reservation.setCheckInDate(dto.getNewCheckIn());
         reservation.setCheckOutDate(dto.getNewCheckOut());
 
-        // 5. Αποθήκευση και επιστροφή
         Reservation updatedReservation = reservationRepository.save(reservation);
         return reservationMapper.toReservationReadOnlyDTO(updatedReservation);
     }
 
     @Transactional
-    public ReservationReadOnlyDTO updateReservation(Long reservationId, String username, ReservationUpdateDTO dto)
-            throws AppObjectNotFoundException, AppObjectInvalidArgumentException, AccessDeniedException {
-
+    public ReservationReadOnlyDTO updateReservation(Long reservationId, String username, ReservationUpdateDTO dto)throws AppObjectNotFoundException, AccessDeniedException,AppObjectInvalidArgumentException {
+        System.out.println("\n=== Attempting update by user: " + username + " ===");
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new AppObjectNotFoundException("Reservation", "Reservation not found"));
+                .orElseThrow(() -> new AppObjectNotFoundException("Reservation", "Not found"));
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppObjectNotFoundException("User", "User not found"));
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppObjectNotFoundException("User", "Not found"));
 
-        if (!isAdminOrEmployee(user)) {
-            throw new AccessDeniedException("Only admin or employee can update all reservation details.");
+        if ("GUEST".equalsIgnoreCase(currentUser.getRole().getName())) {
+            System.out.println("[SECURITY BLOCK] Guest user attempted modification");
+            throw new AccessDeniedException("Guest users cannot modify reservations");
         }
 
-        Room room = roomRepository.findById(dto.getRoomId())
-                .orElseThrow(() -> new AppObjectNotFoundException("Room", "Room not found"));
+        boolean isOwner = reservation.getUser().getId().equals(currentUser.getId());
+        boolean isAdminOrEmployee = currentUser.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") ||
+                        auth.getAuthority().equals("ROLE_EMPLOYEE"));
 
-        ReservationStatus status = reservationStatusRepository.findById(dto.getReservationStatusId())
-                .orElseThrow(() -> new AppObjectNotFoundException("Status", "Status not found"));
-
-        List<Reservation> conflicts = reservationRepository.findConflictingReservations(
-                dto.getRoomId(),
-                dto.getCheckInDate(),
-                dto.getCheckOutDate(),
-                -1L
-        );
-        conflicts = conflicts.stream()
-                .filter(r -> !r.getId().equals(reservationId))
-                .collect(Collectors.toList());
-
-        if (!conflicts.isEmpty()) {
-            throw new AppObjectInvalidArgumentException("Room", "Room is already booked for selected dates");
+        if (!isOwner && !isAdminOrEmployee) {
+            throw new AccessDeniedException("Unauthorized access");
         }
 
-        reservation.setRoom(room);
-        reservation.setCheckInDate(dto.getCheckInDate());
-        reservation.setCheckOutDate(dto.getCheckOutDate());
-        reservation.setStatus(status);
+        if (dto.getRoomId() != null) {
+            Room room = roomRepository.findById(dto.getRoomId())
+                    .orElseThrow(() -> new AppObjectNotFoundException("Room", "Not found"));
+            reservation.setRoom(room);
+        }
 
-        Reservation updatedReservation = reservationRepository.save(reservation);
-        return reservationMapper.toReservationReadOnlyDTO(updatedReservation);
+        if (dto.getCheckInDate() != null) reservation.setCheckInDate(dto.getCheckInDate());
+        if (dto.getCheckOutDate() != null) reservation.setCheckOutDate(dto.getCheckOutDate());
+
+        if (reservation.getCheckOutDate().isBefore(reservation.getCheckInDate())) {
+            throw new AppObjectInvalidArgumentException("Dates", "Invalid date range");
+        }
+
+        Reservation updated = reservationRepository.save(reservation);
+        return reservationMapper.toReservationReadOnlyDTO(updated);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReservationReadOnlyDTO> getReservationsByUserId(Long userId)
             throws AppObjectNotFoundException {
 
-        List<Reservation> reservations = reservationRepository.findByUserId(userId);
-        return reservations.stream()
+        if (!userRepository.existsById(userId)) {
+            throw new AppObjectNotFoundException("User", "User not found");
+        }
+
+        return reservationRepository.findByUserId(userId).stream()
                 .map(reservationMapper::toReservationReadOnlyDTO)
                 .collect(Collectors.toList());
     }
+
 
     @Transactional
     public List<ReservationReadOnlyDTO> getAllReservations() {

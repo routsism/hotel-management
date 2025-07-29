@@ -30,7 +30,14 @@ public class ReservationRestController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<List<ReservationReadOnlyDTO>> getAllReservations() {
+    public ResponseEntity<List<ReservationReadOnlyDTO>> getAllReservations(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if ("GUEST".equalsIgnoreCase(user.getRole().getName())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied for guests");
+        }
+
         return ResponseEntity.ok(reservationService.getAllReservations());
     }
 
@@ -76,6 +83,7 @@ public class ReservationRestController {
             @PathVariable Long id,
             @Valid @RequestBody ReservationUpdateDTO dto,
             Authentication authentication
+
     ) {
         try {
             String username = authentication.getName();
@@ -98,14 +106,10 @@ public class ReservationRestController {
     ) {
         try {
             String username = authentication.getName();
-            ReservationReadOnlyDTO updated = reservationService.updateReservationDates(id, username, dto);
+            ReservationReadOnlyDTO updated = reservationService.updateReservationDates(id, dto, username);
             return ResponseEntity.ok(updated);
-        } catch (AppObjectNotFoundException e) {
+        } catch (AppObjectNotFoundException |AppObjectInvalidArgumentException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (AppObjectInvalidArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (AccessDeniedException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
 
