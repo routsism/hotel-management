@@ -68,7 +68,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, "/api/reservations")
                                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_GUEST")
 
-                                .requestMatchers(HttpMethod.GET, "/api/reservations/*")
+                                .requestMatchers(HttpMethod.GET, "/api/reservations/user/*")
                                 .hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE", "ROLE_GUEST")
 
 //                                .requestMatchers(HttpMethod.PUT, "/api/reservations/*/dates")

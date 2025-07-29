@@ -1,26 +1,32 @@
 package gr.aueb.cf.hotel_managment.dto;
 
-
+import io.micrometer.common.lang.Nullable;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationReadOnlyDTO {
-    private Long id;
-    private String username;
+@Getter
+@Setter
+public class ReservationUpdateDTO {
+    @Nullable
     private Long roomId;
-    private String roomNumber;
-    private String hotelName;
+
+    @Nullable
+    private Long reservationStatusId;
+
+    @Nullable
+    @FutureOrPresent
     private LocalDateTime checkInDate;
+
+    @Nullable
+    @Future
     private LocalDateTime checkOutDate;
-    private ReservationStatusReadOnlyDTO reservationStatus;
+
 }

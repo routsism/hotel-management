@@ -2,13 +2,11 @@ package gr.aueb.cf.hotel_managment.rest;
 
 import gr.aueb.cf.hotel_managment.dto.ReservationInsertDTO;
 import gr.aueb.cf.hotel_managment.dto.ReservationReadOnlyDTO;
+import gr.aueb.cf.hotel_managment.dto.ReservationUpdateDTO;
 import gr.aueb.cf.hotel_managment.dto.UpdateReservationDatesDTO;
-import gr.aueb.cf.hotel_managment.mapper.ReservationMapper;
-import gr.aueb.cf.hotel_managment.model.Reservation;
 import gr.aueb.cf.hotel_managment.model.User;
 import gr.aueb.cf.hotel_managment.model.core.exceptions.AppObjectInvalidArgumentException;
 import gr.aueb.cf.hotel_managment.model.core.exceptions.AppObjectNotFoundException;
-import gr.aueb.cf.hotel_managment.repository.ReservationRepository;
 import gr.aueb.cf.hotel_managment.repository.UserRepository;
 import gr.aueb.cf.hotel_managment.service.ReservationService;
 import jakarta.validation.Valid;
@@ -33,11 +31,10 @@ public class ReservationRestController {
 
     @GetMapping
     public ResponseEntity<List<ReservationReadOnlyDTO>> getAllReservations() {
-        List<ReservationReadOnlyDTO> reservations = reservationService.getAllReservations();
-        return ResponseEntity.ok(reservations);
+        return ResponseEntity.ok(reservationService.getAllReservations());
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReservationReadOnlyDTO>> getReservationsByUserId(
             @PathVariable Long userId,
             Authentication authentication
@@ -46,30 +43,30 @@ public class ReservationRestController {
         User loggedUser = userRepository.findByUsername(loggedUsername)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        boolean isAdminOrEmployee = loggedUser.getRole().getName().equals("ROLE_ADMIN") ||
-                loggedUser.getRole().getName().equals("ROLE_EMPLOYEE");
-
-        if (!isAdminOrEmployee && !loggedUser.getId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to view these reservations");
+        if (!loggedUser.getId().equals(userId) &&
+                !hasAdminOrEmployeeRole(loggedUser)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         }
 
         try {
-            List<ReservationReadOnlyDTO> reservations = reservationService.getReservationsByUserId(userId);
-            return ResponseEntity.ok(reservations);
+            return ResponseEntity.ok(reservationService.getReservationsByUserId(userId));
         } catch (AppObjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-
     @PostMapping
     public ResponseEntity<ReservationReadOnlyDTO> createReservation(
-            @Valid @RequestBody ReservationInsertDTO dto
+            @Valid @RequestBody ReservationInsertDTO dto,
+            Authentication authentication
     ) {
         try {
-            ReservationReadOnlyDTO reservation = reservationService.createReservation(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
-        } catch (AppObjectNotFoundException | AppObjectInvalidArgumentException e) {
+            String username = authentication.getName();
+            ReservationReadOnlyDTO created = reservationService.createReservation(dto, username);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        } catch (AppObjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AppObjectInvalidArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -77,11 +74,11 @@ public class ReservationRestController {
     @PutMapping("/{id}")
     public ResponseEntity<ReservationReadOnlyDTO> updateReservation(
             @PathVariable Long id,
-            @Valid @RequestBody ReservationInsertDTO dto,
+            @Valid @RequestBody ReservationUpdateDTO dto,
             Authentication authentication
     ) {
-        String username = authentication.getName();
         try {
+            String username = authentication.getName();
             ReservationReadOnlyDTO updated = reservationService.updateReservation(id, username, dto);
             return ResponseEntity.ok(updated);
         } catch (AppObjectNotFoundException e) {
@@ -99,11 +96,13 @@ public class ReservationRestController {
             @Valid @RequestBody UpdateReservationDatesDTO dto,
             Authentication authentication
     ) {
-        String username = authentication.getName();
         try {
+            String username = authentication.getName();
             ReservationReadOnlyDTO updated = reservationService.updateReservationDates(id, username, dto);
             return ResponseEntity.ok(updated);
-        } catch (AppObjectNotFoundException | AppObjectInvalidArgumentException e) {
+        } catch (AppObjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (AppObjectInvalidArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (AccessDeniedException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
@@ -115,8 +114,8 @@ public class ReservationRestController {
             @PathVariable Long id,
             Authentication authentication
     ) {
-        String username = authentication.getName();
         try {
+            String username = authentication.getName();
             reservationService.cancelReservation(id, username);
             return ResponseEntity.noContent().build();
         } catch (AppObjectNotFoundException e) {
@@ -128,19 +127,20 @@ public class ReservationRestController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_EMPLOYEE')")
-    public ResponseEntity<Void> updateReservationStatus(
+    public ResponseEntity<ReservationReadOnlyDTO> updateReservationStatus(
             @PathVariable Long id,
             @RequestParam String newStatus
     ) {
         try {
-            reservationService.updateStatus(id, newStatus);
-            return ResponseEntity.noContent().build();
+            ReservationReadOnlyDTO updated = reservationService.updateStatus(id, newStatus);
+            return ResponseEntity.ok(updated);
         } catch (AppObjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    private boolean hasAdminOrEmployeeRole(User user) {
+        String role = user.getRole().getName();
+        return role.equals("ROLE_ADMIN") || role.equals("ROLE_EMPLOYEE");
+    }
 }
-
-
-
-
