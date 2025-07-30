@@ -131,8 +131,10 @@ public class ReservationService {
     }
 
     @Transactional
-    public ReservationReadOnlyDTO updateReservation(Long reservationId, String username, ReservationUpdateDTO dto)throws AppObjectNotFoundException, AccessDeniedException,AppObjectInvalidArgumentException {
+    public ReservationReadOnlyDTO updateReservation(Long reservationId, String username, ReservationUpdateDTO dto)
+            throws AppObjectNotFoundException, AccessDeniedException, AppObjectInvalidArgumentException {
         System.out.println("\n=== Attempting update by user: " + username + " ===");
+
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new AppObjectNotFoundException("Reservation", "Not found"));
 
@@ -145,9 +147,8 @@ public class ReservationService {
         }
 
         boolean isOwner = reservation.getUser().getId().equals(currentUser.getId());
-        boolean isAdminOrEmployee = currentUser.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") ||
-                        auth.getAuthority().equals("ROLE_EMPLOYEE"));
+        boolean isAdminOrEmployee = "ADMIN".equalsIgnoreCase(currentUser.getRole().getName())
+                || "EMPLOYEE".equalsIgnoreCase(currentUser.getRole().getName());
 
         if (!isOwner && !isAdminOrEmployee) {
             throw new AccessDeniedException("Unauthorized access");
@@ -159,8 +160,18 @@ public class ReservationService {
             reservation.setRoom(room);
         }
 
-        if (dto.getCheckInDate() != null) reservation.setCheckInDate(dto.getCheckInDate());
-        if (dto.getCheckOutDate() != null) reservation.setCheckOutDate(dto.getCheckOutDate());
+        if (dto.getReservationStatusId() != null) {
+            ReservationStatus status = reservationStatusRepository.findById(dto.getReservationStatusId())
+                    .orElseThrow(() -> new AppObjectNotFoundException("ReservationStatus", "Not found"));
+            reservation.setStatus(status);
+        }
+
+        if (dto.getCheckInDate() != null) {
+            reservation.setCheckInDate(dto.getCheckInDate());
+        }
+        if (dto.getCheckOutDate() != null) {
+            reservation.setCheckOutDate(dto.getCheckOutDate());
+        }
 
         if (reservation.getCheckOutDate().isBefore(reservation.getCheckInDate())) {
             throw new AppObjectInvalidArgumentException("Dates", "Invalid date range");
@@ -169,6 +180,7 @@ public class ReservationService {
         Reservation updated = reservationRepository.save(reservation);
         return reservationMapper.toReservationReadOnlyDTO(updated);
     }
+
 
     @Transactional(readOnly = true)
     public List<ReservationReadOnlyDTO> getReservationsByUserId(Long userId)

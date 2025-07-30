@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Edit Hotel</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()" style="min-width: 300px;">
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" [disabled]="true" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Address</mat-label>
+    <input matInput formControlName="address" [disabled]="true" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Phone</mat-label>
+    <input matInput formControlName="phone" />
+    <mat-error *ngIf="form.get('phone')?.invalid">Invalid phone number</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" />
+    <mat-error *ngIf="form.get('email')?.invalid">Invalid email address</mat-error>
+  </mat-form-field>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Save</button>
+  </div>
+</form>

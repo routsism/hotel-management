@@ -1,0 +1,50 @@
+<h2 mat-dialog-title style="text-align: center; width: 100%; margin-top: 1rem;">
+  Add Reservation
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-3">
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>Room ID</mat-label>
+    <input matInput formControlName="roomId" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>User ID</mat-label>
+    <input matInput formControlName="userId" readonly />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>Check-in Date</mat-label>
+    <input matInput [matDatepicker]="checkInPicker" formControlName="checkInDate" />
+    <mat-icon matSuffix style="cursor:pointer" (click)="openCheckInPicker()">calendar_today</mat-icon>
+    <mat-datepicker #checkInPicker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>Check-out Date</mat-label>
+    <input matInput [matDatepicker]="checkOutPicker" formControlName="checkOutDate" />
+    <mat-icon matSuffix style="cursor:pointer" (click)="openCheckOutPicker()">calendar_today</mat-icon>
+    <mat-datepicker #checkOutPicker></mat-datepicker>
+  </mat-form-field>
+
+  <div class="d-flex gap-2 mb-3">
+  <mat-form-field appearance="fill" class="flex-grow-1">
+    <mat-label>Check-in Time</mat-label>
+    <input matInput type="time" formControlName="checkInTime" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="flex-grow-1">
+    <mat-label>Check-out Time</mat-label>
+    <input matInput type="time" formControlName="checkOutTime" required />
+    </mat-form-field>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button mat-button type="button" (click)="onCancel()" [disabled]="loading">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+      Add
+    </button>
+  </div>
+
+</form>

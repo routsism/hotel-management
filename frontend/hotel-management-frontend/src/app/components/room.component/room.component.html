@@ -21,6 +21,11 @@
     </div>
 
     <table mat-table [dataSource]="rooms" class="custom-table">
+      <ng-container matColumnDef="roomId">
+        <th mat-header-cell *matHeaderCellDef scope="col">Room ID</th>
+        <td mat-cell *matCellDef="let room"> {{ room.id }} </td>
+      </ng-container>
+
       <ng-container matColumnDef="roomNumber">
         <th mat-header-cell *matHeaderCellDef scope="col">Room Number</th>
         <td mat-cell *matCellDef="let room"> {{ room.roomNumber }} </td>
@@ -53,8 +58,19 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="canEditOrDelete ? ['roomNumber', 'hotel', 'roomType', 'pricePerNight', 'actions'] : ['roomNumber', 'hotel', 'roomType', 'pricePerNight']" class="header-row"></tr>
-      <tr mat-row *matRowDef="let row; columns: canEditOrDelete ? ['roomNumber', 'hotel', 'roomType', 'pricePerNight', 'actions'] : ['roomNumber', 'hotel', 'roomType', 'pricePerNight']" class="data-row"></tr>
+      <tr mat-header-row 
+    *matHeaderRowDef="canEditOrDelete 
+      ? ['roomId', 'roomNumber', 'hotel', 'roomType', 'pricePerNight', 'actions'] 
+      : ['roomId', 'roomNumber', 'hotel', 'roomType', 'pricePerNight']" 
+    class="header-row">
+</tr>
+
+<tr mat-row 
+    *matRowDef="let row; columns: canEditOrDelete 
+      ? ['roomId', 'roomNumber', 'hotel', 'roomType', 'pricePerNight', 'actions'] 
+      : ['roomId', 'roomNumber', 'hotel', 'roomType', 'pricePerNight']" 
+    class="data-row">
+</tr>
     </table>
 
     <div *ngIf="!loading && rooms.length === 0" class="no-data">

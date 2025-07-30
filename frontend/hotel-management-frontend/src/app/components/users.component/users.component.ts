@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { UserService, UserReadOnlyDTO } from '../../services/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ConfirmDialogComponent } from '../confirm-dialog.component/confirm-dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -66,21 +67,29 @@ export class UsersComponent implements OnInit {
   });
 }
 
-deleteUser(id: number) {
-  if (confirm('Are you sure you want to delete this user?')) {
-    this.userService.deleteUser(id).subscribe({
-      next: () => {
-        this.snackBar.open('User deleted.', 'OK', { duration: 2000 });
-        this.loadUsers();
-      },
-      error: () => this.snackBar.open('Failed to delete user.', 'Close', { duration: 3000 })
+deleteUser(user: UserReadOnlyDTO) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: {
+        title: 'Confirm Deletion',
+        message: `Are you sure you want to delete user "${user.username}"?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.userService.deleteUser(user.id).subscribe({
+          next: () => {
+            this.snackBar.open('User deleted successfully!', 'OK', { duration: 2000 });
+            this.loadUsers();
+          },
+          error: () => this.snackBar.open('Failed to delete user.', 'Close', { duration: 3000 })
+        });
+      }
     });
   }
-}
 
 addUser() {
-  // this.router.navigate(['/users/register'], { replaceUrl: false });
-
   const dialogRef = this.dialog.open(UserDialogComponent, {
     width: '400px',
     data: { mode: 'create' }

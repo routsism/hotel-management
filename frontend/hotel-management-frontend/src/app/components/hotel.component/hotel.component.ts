@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog.component/confirm-dialog.component';
 import { HotelDialogComponent } from '../hotel-dialog.component/hotel-dialog.component';
 
 @Component({
@@ -28,7 +29,7 @@ import { HotelDialogComponent } from '../hotel-dialog.component/hotel-dialog.com
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
   ],
 })
 export class HotelComponent implements OnInit {
@@ -145,17 +146,23 @@ export class HotelComponent implements OnInit {
     return;
   }
 
-  const confirmed = window.confirm(`Are you sure you want to delete hotel "${hotel.name}"?`);
-  if (!confirmed) return;
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    width: '300px',
+    data: { title: 'Confirm Deletion', message: `Are you sure you want to delete hotel "${hotel.name}"?` }
+  });
 
-  this.hotelService.deleteHotel(hotel.id!).subscribe({
-    next: () => {
-      this.hotels = this.hotels.filter(h => h.id !== hotel.id);
-      this.snackBar.open('Hotel deleted successfully!', 'Close', { duration: 3000 });
-    },
-    error: (err) => {
-      this.errorMessage = 'Error deleting hotel';
-      console.error(err);
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.hotelService.deleteHotel(hotel.id!).subscribe({
+        next: () => {
+          this.hotels = this.hotels.filter(h => h.id !== hotel.id);
+          this.snackBar.open('Hotel deleted successfully!', 'Close', { duration: 3000 });
+        },
+        error: (err) => {
+          this.errorMessage = 'Error deleting hotel';
+          console.error(err);
+        }
+      });
     }
   });
 }

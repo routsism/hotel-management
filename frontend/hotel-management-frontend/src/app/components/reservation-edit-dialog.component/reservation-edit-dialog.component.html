@@ -1,0 +1,58 @@
+<h2 mat-dialog-title style="text-align: center; width: 100%; margin-top: 1rem;">
+  Edit Reservation #{{ reservation.id }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSave()" class="p-3">
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>Room ID</mat-label>
+    <input matInput type="number" formControlName="roomId" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>Status</mat-label>
+    <mat-select formControlName="reservationStatusId">
+      <mat-option [value]="1">PENDING</mat-option>
+      <mat-option [value]="2">CONFIRMED</mat-option>
+      <mat-option [value]="3">CANCELLED</mat-option>
+      <mat-option [value]="4">COMPLETED</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>Check-in Date</mat-label>
+    <input matInput [matDatepicker]="checkInPicker" formControlName="checkInDate" />
+    <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle>
+    <mat-datepicker #checkInPicker></mat-datepicker>
+  </mat-form-field>
+  
+<div class="d-flex gap-3 mb-3">
+  <mat-form-field appearance="fill" class="flex-fill">
+    <mat-label>Check-in Time</mat-label>
+    <input matInput type="time" formControlName="checkInTime" [disabled]="!(canEditAllFields || canEditDate)" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="flex-fill">
+    <mat-label>Check-out Time</mat-label>
+    <input matInput type="time" formControlName="checkOutTime" [disabled]="!(canEditAllFields || canEditDate)" />
+  </mat-form-field>
+</div>
+
+  <mat-form-field appearance="fill" class="w-100 mb-3">
+    <mat-label>Check-out Date</mat-label>
+    <input matInput [matDatepicker]="checkOutPicker" formControlName="checkOutDate" />
+    <mat-datepicker-toggle matSuffix [for]="checkOutPicker"></mat-datepicker-toggle>
+    <mat-datepicker #checkOutPicker></mat-datepicker>
+  </mat-form-field>
+
+  
+
+
+  <div class="d-flex justify-content-end gap-2">
+    <button mat-button type="button" (click)="onCancel()" [disabled]="loading">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+      Save
+    </button>
+  </div>
+  
+</form>

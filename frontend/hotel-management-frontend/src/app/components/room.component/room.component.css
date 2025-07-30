@@ -1,10 +1,17 @@
-/* Background και overlay */
 .background-wrapper {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: url('https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
   filter: brightness(0.35) saturate(0.8);
   z-index: 0;
+}
+
+.custom-table th:nth-child(1),
+.custom-table td:nth-child(1) {
+  width: 60px;
+  text-align: center;
+  font-weight: 700;
+  color: #8ab4f8;
 }
 
 .background-overlay {
@@ -14,7 +21,6 @@
   z-index: 1;
 }
 
-/* Container που κρατάει όλα */
 .container {
   position: relative;
   z-index: 3;
@@ -25,7 +31,6 @@
   color: #e0f0ff;
 }
 
-/* Card */
 .card {
   background: rgba(15, 22, 39, 0.9);
   border-radius: 1rem;
@@ -34,7 +39,6 @@
   backdrop-filter: saturate(180%) blur(15px);
 }
 
-/* Header */
 h2 {
   font-weight: 800;
   font-size: 2.6rem;
@@ -45,7 +49,6 @@ h2 {
   text-shadow: 0 0 15px rgba(0,111,184,0.8);
 }
 
-/* Κουμπιά */
 .d-flex {
   display: flex;
   justify-content: space-between;
@@ -91,13 +94,11 @@ h2 {
   box-shadow: 0 0 20px #a8d0ff;
 }
 
-/* Mat progress bar override */
 .mat-progress-bar {
   height: 5px !important;
   border-radius: 5px;
 }
 
-/* Alert error */
 .alert-danger {
   background: rgba(200, 40, 40, 0.9);
   border-radius: 0.8rem;
@@ -105,7 +106,6 @@ h2 {
   box-shadow: 0 0 10px rgba(200, 40, 40, 0.8);
 }
 
-/* Πίνακας */
 .custom-table {
   width: 100%;
   border-collapse: separate;
@@ -137,7 +137,6 @@ h2 {
   border-radius: 0.5rem;
 }
 
-/* Σειρές πίνακα hover & focus-within (για mobile tap) */
 .data-row:hover td,
 .data-row:focus-within td {
   background: rgba(0, 111, 184, 0.95);
@@ -153,22 +152,26 @@ h2 {
   outline: none;
 }
 
-/* Χωρίς outline όταν είναι focus */
 .data-row:focus-within {
   outline: none;
 }
 
-/* Κουμπιά icon στο actions */
 .mat-icon-button {
   color: #81a8ff;
   transition: color 0.3s ease;
 }
 
-.mat-icon-button:hover {
-  color: #66bbff;
+.mat-icon-button[color="accent"]:hover {
+  background-color: rgba(128, 128, 128, 0.3); 
+  border-radius: 50%; 
 }
 
-/* Όταν είναι warn (delete) κόκκινο */
+
+.mat-icon-button[color="warn"]:hover {
+  background-color: rgba(255, 0, 0, 0.3); 
+  border-radius: 50%; 
+}
+
 .mat-icon-button[color="warn"] {
   color: #f56565;
 }
@@ -177,7 +180,6 @@ h2 {
   color: #f87171;
 }
 
-/* Όταν δεν υπάρχουν δωμάτια */
 .no-data {
   text-align: center;
   font-style: italic;

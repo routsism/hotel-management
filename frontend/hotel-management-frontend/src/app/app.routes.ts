@@ -5,7 +5,7 @@ import { LoginComponent } from './components/login.component/login.component'
 import { DashboardComponent } from './components/dashboard.component/dashboard.component';
 import { HotelComponent } from './components/hotel.component/hotel.component';
 import { RoomComponent } from './components/room.component/room.component';
-import { ReservationComponent } from './components/reservation.component/reservation.component';
+import { ReservationListComponent } from './components/reservation-list.component/reservation-list.component';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -19,6 +19,6 @@ export const routes: Routes = [
 },
   { path: 'users/register', component: UsersComponent },
   { path: 'rooms', component: RoomComponent },
-  { path: 'reservations', component: ReservationComponent },
+  { path: 'reservations', component: ReservationListComponent },
   { path: '', redirectTo: '/register', pathMatch: 'full' }
 ];

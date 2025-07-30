@@ -1,0 +1,58 @@
+<div class="reservations-container">
+
+  <div class="reservations-header text-center py-5">
+    <h1><mat-icon class="header-icon">calendar_month</mat-icon>Reservations</h1>
+    <p class="subtitle">Track your hotel stays and schedules</p>
+  </div>
+
+  <div class="actions text-center my-4">
+    <button mat-raised-button color="primary" class="add-btn me-2" (click)="onAdd()">
+      <mat-icon>add</mat-icon> Add Reservation
+    </button>
+    <button mat-stroked-button color="accent" class="back-btn" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon> Back to Dashboard
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container my-4 text-center">
+    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+    <p>Loading reservations...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger text-center">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && reservations.length === 0" class="text-center text-muted">
+    No reservations found.
+  </div>
+
+  <div class="reservations-grid container mt-4" *ngIf="!loading && !error && reservations.length">
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4" *ngFor="let r of reservations">
+        <mat-card class="reservation-card">
+          <mat-card-title>Reservation #{{ r.id }}</mat-card-title>
+          <mat-card-content>
+            <p><strong>User:</strong> {{ r.username }}</p>
+            <p><strong>Room:</strong> {{ r.roomNumber }} @ {{ r.hotelName }}</p>
+            <p><strong>Check In:</strong> {{ r.checkInDate | date:'short' }}</p>
+            <p><strong>Check Out:</strong> {{ r.checkOutDate | date:'short' }}</p>
+            <p><strong>Status:</strong>
+              <span [ngClass]="'status-label ' + r.reservationStatus.name.toLowerCase()">
+                {{ r.reservationStatus.name }}
+              </span>
+            </p>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-icon-button color="primary" *ngIf="canEdit(r)" (click)="onEdit(r)" aria-label="Edit reservation">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" *ngIf="canDelete(r)" (click)="onDelete(r)" aria-label="Delete reservation">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+</div>
+

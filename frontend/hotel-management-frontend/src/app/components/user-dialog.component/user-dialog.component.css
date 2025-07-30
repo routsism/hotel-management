@@ -1,11 +1,18 @@
+mat-dialog-title {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
 }
 
-
-.full-width {
-  width: 100%;
+.mat-form-field {
+  width: 320px;
 }
 

@@ -1,0 +1,27 @@
+.text-center {
+  text-align: center;
+}
+
+.mb-4 {
+  margin-bottom: 1rem; 
+}
+
+mat-dialog-content p {
+  font-size: 1.1rem;
+  color: #444;
+  margin: 0;
+  line-height: 1.5;
+}
+
+mat-dialog-actions {
+  padding: 0 24px 20px 24px;
+}
+
+button {
+  min-width: 80px;
+}
+
+button[color="warn"] {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
