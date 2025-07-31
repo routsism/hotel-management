@@ -49,14 +49,15 @@ password: from application-test.properties
 
 Using IntelliJ or terminal:
 bash:
-cd backend/hotel-managment
-./gradlew bootRun
+∙ cd backend/hotel-managment
+∙ ./gradlew bootRun
 
 ## ▶️ Run the Frontend
 
-cd frontend\hotel-management-frontend
-npm install
-ng serve
+∙ cd frontend\hotel-management-frontend
+∙ npm install
+∙ ng serve
+
 
 Visit: http://localhost:4200
 
@@ -88,8 +89,8 @@ Visit: http://localhost:4200
 👨‍💼 Employee Access
 Full access to:
 
-/api/rooms/**
-/api/reservations/**
+∙ /api/rooms/**
+∙ /api/reservations/**
 
 🙍 Guest Access
 | Method | Endpoint                    | Description              |
